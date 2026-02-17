@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block title %}Courses - Lecturer Management System{% endblock %}
+
+{% block content %}
+<h1>Courses</h1>
+<a href="{{ url_for('add_course') }}" class="btn">Add Course</a>
+<table>
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Code</th>
+            <th>Department</th>
+            <th>Lecturer</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for course in courses %}
+            <tr>
+                <td>{{ course.name }}</td>
+                <td>{{ course.code }}</td>
+                <td>{{ course.department.name }}</td>
+                <td>{{ course.lecturer.name if course.lecturer else 'Not Assigned' }}</td>
+                <td>
+                    <a href="#" class="btn">Edit</a>
+                    <a href="#" class="btn">Delete</a>
+                </td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

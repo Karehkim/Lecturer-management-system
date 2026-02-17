@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block title %}Input Marks - Lecturer Management System{% endblock %}
+
+{% block content %}
+<h1>Input Student Marks</h1>
+<form method="POST">
+    <div class="form-group">
+        <label for="student_id">Student:</label>
+        <select id="student_id" name="student_id" required>
+            {% for student in students %}
+                <option value="{{ student.id }}">{{ student.name }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="form-group">
+        <label for="course_id">Course:</label>
+        <select id="course_id" name="course_id" required>
+            {% for course in courses %}
+                <option value="{{ course.id }}">{{ course.name }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="form-group">
+        <label for="marks">Marks:</label>
+        <input type="number" id="marks" name="marks" step="0.01" required>
+    </div>
+    <div class="form-group">
+        <label for="grade">Grade:</label>
+        <input type="text" id="grade" name="grade" maxlength="5">
+    </div>
+    <button type="submit">Submit Marks</button>
+</form>
+{% endblock %}

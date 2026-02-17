@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Lecturer Management System{% endblock %}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <nav id="drawer">
+        <div class="drawer-content">
+            <h2>LMS</h2>
+            <ul>
+                <li><a href="{{ url_for('dashboard') }}"><i class="material-icons">dashboard</i> Dashboard</a></li>
+                {% if current_user.role == 'admin' %}
+                <li><a href="{{ url_for('departments') }}"><i class="material-icons">business</i> Departments</a></li>
+                <li><a href="{{ url_for('lecturers') }}"><i class="material-icons">school</i> Lecturers</a></li>
+                {% endif %}
+                <li><a href="{{ url_for('courses') }}"><i class="material-icons">book</i> Courses</a></li>
+                <li><a href="{{ url_for('students') }}"><i class="material-icons">people</i> Students</a></li>
+                <li><a href="{{ url_for('attendance') }}"><i class="material-icons">check_circle</i> Attendance</a></li>
+                <li><a href="{{ url_for('leave') }}"><i class="material-icons">event_busy</i> Leave</a></li>
+                <li><a href="{{ url_for('timetable') }}"><i class="material-icons">schedule</i> Timetable</a></li>
+                <li><a href="{{ url_for('calendar') }}"><i class="material-icons">calendar_today</i> Calendar</a></li>
+                <li><a href="{{ url_for('messages') }}"><i class="material-icons">message</i> Messages</a></li>
+                <li><a href="{{ url_for('reports') }}"><i class="material-icons">assessment</i> Reports</a></li>
+                <li><a href="{{ url_for('logout') }}"><i class="material-icons">logout</i> Logout</a></li>
+            </ul>
+        </div>
+    </nav>
+    <div class="app-content">
+        <header>
+            <button id="menu-button"><i class="material-icons">menu</i></button>
+            <h1>Lecturer Management System</h1>
+            <button id="dark-mode-toggle"><i class="material-icons">brightness_6</i></button>
+        </header>
+        <main>
+            <div class="container">
+                {% with messages = get_flashed_messages() %}
+                    {% if messages %}
+                        <ul class="flashes">
+                            {% for message in messages %}
+                                <li>{{ message }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                {% endwith %}
+                {% block content %}{% endblock %}
+            </div>
+        </main>
+    </div>
+    <div id="scrim"></div>
+    <div class="banner">
+        <img src="https://images.unsplash.com/photo-1565688534245-05d6b5be184a?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" alt="University Campus">
+    </div>
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>

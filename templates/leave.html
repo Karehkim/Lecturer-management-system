@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block title %}Leave Management - Lecturer Management System{% endblock %}
+
+{% block content %}
+<h1>Leave Management</h1>
+<form method="POST" action="{{ url_for('apply_leave') }}">
+    <div class="form-group">
+        <label for="lecturer_id">Lecturer:</label>
+        <select id="lecturer_id" name="lecturer_id" required>
+            {% for lecturer in lecturers %}
+                <option value="{{ lecturer.id }}">{{ lecturer.name }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="form-group">
+        <label for="start_date">Start Date:</label>
+        <input type="date" id="start_date" name="start_date" required>
+    </div>
+    <div class="form-group">
+        <label for="end_date">End Date:</label>
+        <input type="date" id="end_date" name="end_date" required>
+    </div>
+    <div class="form-group">
+        <label for="reason">Reason:</label>
+        <textarea id="reason" name="reason"></textarea>
+    </div>
+    <button type="submit">Apply Leave</button>
+</form>
+<table>
+    <thead>
+        <tr>
+            <th>Lecturer</th>
+            <th>Start Date</th>
+            <th>End Date</th>
+            <th>Reason</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for lv in leaves %}
+            <tr>
+                <td>{{ lv.lecturer.name }}</td>
+                <td>{{ lv.start_date }}</td>
+                <td>{{ lv.end_date }}</td>
+                <td>{{ lv.reason }}</td>
+                <td>{{ lv.status }}</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

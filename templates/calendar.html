@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block title %}Calendar - Lecturer Management System{% endblock %}
+
+{% block content %}
+<h1>Course Calendar</h1>
+<div class="calendar">
+    <h2>Upcoming Courses</h2>
+    <ul>
+        {% for course in courses %}
+            <li>
+                <strong>{{ course.name }}</strong> - {{ course.code }}<br>
+                Department: {{ course.department.name }}<br>
+                Lecturer: {{ course.lecturer.name if course.lecturer else 'Not Assigned' }}
+            </li>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}

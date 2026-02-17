@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block title %}Reports - Lecturer Management System{% endblock %}
+
+{% block content %}
+<h1>Reports</h1>
+{% for course, marks in report_data.items() %}
+    <h2>{{ course }}</h2>
+    <p>Average Marks: {{ (marks | sum / marks | length) | round(2) }}%</p>
+    <ul>
+        {% for mark in marks %}
+            <li>{{ mark }}%</li>
+        {% endfor %}
+    </ul>
+{% endfor %}
+{% endblock %}

@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block title %}Messages - Lecturer Management System{% endblock %}
+
+{% block content %}
+<h1>Messages</h1>
+<div class="messages">
+    <h2>Recent Notifications</h2>
+    <ul>
+        {% for notification in notifications %}
+            <li>{{ notification }}</li>
+        {% else %}
+            <li>No new messages.</li>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}

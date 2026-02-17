@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+
+{% block title %}Student Attendance - Lecturer Management System{% endblock %}
+
+{% block content %}
+<h1>Student Attendance</h1>
+{% if current_user.role == 'lecturer' %}
+    <form method="POST" action="{{ url_for('mark_attendance') }}">
+        <div class="form-group">
+            <label for="course_id">Course:</label>
+            <select id="course_id" name="course_id" required>
+                {% for course in courses %}
+                    <option value="{{ course.id }}">{{ course.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="student_id">Student:</label>
+            <select id="student_id" name="student_id" required>
+                {% for course in courses %}
+                    {% for enrollment in course.enrollments %}
+                        <option value="{{ enrollment.student.id }}">{{ enrollment.student.name }} ({{ course.name }})</option>
+                    {% endfor %}
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="date">Date:</label>
+            <input type="date" id="date" name="date" required>
+        </div>
+        <div class="form-group">
+            <label for="status">Status:</label>
+            <select id="status" name="status" required>
+                <option value="present">Present</option>
+                <option value="absent">Absent</option>
+            </select>
+        </div>
+        <button type="submit">Mark Attendance</button>
+    </form>
+{% else %}
+    <form method="POST" action="{{ url_for('mark_attendance') }}">
+        <div class="form-group">
+            <label for="student_id">Student:</label>
+            <select id="student_id" name="student_id" required>
+                {% for student in students %}
+                    <option value="{{ student.id }}">{{ student.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="course_id">Course:</label>
+            <select id="course_id" name="course_id" required>
+                {% for course in courses %}
+                    <option value="{{ course.id }}">{{ course.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="date">Date:</label>
+            <input type="date" id="date" name="date" required>
+        </div>
+        <div class="form-group">
+            <label for="status">Status:</label>
+            <select id="status" name="status" required>
+                <option value="present">Present</option>
+                <option value="absent">Absent</option>
+            </select>
+        </div>
+        <button type="submit">Mark Attendance</button>
+    </form>
+{% endif %}
+<table>
+    <thead>
+        <tr>
+            <th>Student</th>
+            <th>Course</th>
+            <th>Date</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for att in attendances %}
+            <tr>
+                <td>{{ att.student.name if att.student else 'N/A' }}</td>
+                <td>{{ att.course.name if att.course else 'N/A' }}</td>
+                <td>{{ att.date }}</td>
+                <td>{{ att.status }}</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

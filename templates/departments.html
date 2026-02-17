@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block title %}Departments - Lecturer Management System{% endblock %}
+
+{% block content %}
+<h1>Departments</h1>
+<a href="{{ url_for('add_department') }}" class="btn">Add Department</a>
+<table>
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for department in departments %}
+            <tr>
+                <td>{{ department.name }}</td>
+                <td>{{ department.description }}</td>
+                <td>
+                    <a href="#" class="btn">Edit</a>
+                    <a href="#" class="btn">Delete</a>
+                </td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

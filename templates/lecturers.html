@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block title %}Lecturers - Lecturer Management System{% endblock %}
+
+{% block content %}
+<h1>Lecturers</h1>
+<a href="{{ url_for('add_lecturer') }}" class="btn">Add Lecturer</a>
+<table>
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Phone</th>
+            <th>Department</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for lecturer in lecturers %}
+            <tr>
+                <td>{{ lecturer.name }}</td>
+                <td>{{ lecturer.email }}</td>
+                <td>{{ lecturer.phone }}</td>
+                <td>{{ lecturer.department.name }}</td>
+                <td>
+                    <a href="#" class="btn">Edit</a>
+                    <a href="#" class="btn">Delete</a>
+                </td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
