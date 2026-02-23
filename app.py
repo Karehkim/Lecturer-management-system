@@ -478,4 +478,5 @@ if __name__ == '__main__':
             admin_user = User(username='admin', password=hashed_password, role='admin')
             db.session.add(admin_user)
             db.session.commit()
-    app.run(debug=True)
+    # Listen on all interfaces so your phone can access it
+    app.run(host='0.0.0.0', port=5000, debug=True)

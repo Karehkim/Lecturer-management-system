@@ -103,6 +103,20 @@ button:hover {
     margin-bottom: 8px;
     text-align: center;
 }
+.project-title {
+    font-size: clamp(8px, 4vw, 40px); /* min 8px, max 40px, scales with viewport width */
+    white-space: nowrap; 
+    overflow: hidden; 
+    text-overflow: ellipsis; 
+}
+
+.project-subtitle {
+    font-size: clamp(6px, 2.5vw, 20px);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: inline-block; 
+}
 </style>
 </head>
 <body>
