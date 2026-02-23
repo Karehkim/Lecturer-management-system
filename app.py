@@ -88,46 +88,69 @@ def load_user(user_id):
     return User.query.get(int(user_id))
 
 # Routes
+# Dashboard Route
 @app.route('/')
 @login_required
 def dashboard():
     if current_user.role == 'lecturer':
         lecturer = Lecturer.query.filter_by(user_id=current_user.id).first()
+
+        # If lecturer profile does not exist, redirect to complete_profile
+        if lecturer is None:
+            flash("Please complete your profile first.", "info")
+            return redirect(url_for("complete_profile"))
+
+        # Lecturer dashboard logic
         courses = Course.query.filter_by(lecturer_id=lecturer.id).all()
         students_count = sum(len(course.enrollments) for course in courses)
+
         marks = []
         for course in courses:
             marks.extend(Mark.query.filter_by(course_id=course.id).all())
-        average_marks = sum(m.marks for m in marks) / len(marks) if marks else 0
-        notifications = []  # Add course assignments or messages
-        report_data = {}
-        for mark in marks:
-            course = mark.course.name
-            if course not in report_data:
-                report_data[course] = []
-            report_data[course].append(mark.marks)
-        return render_template('dashboard.html', courses=courses, students_count=students_count,
-                               average_marks=round(average_marks, 2), notifications=notifications,
-                               report_data=report_data, is_lecturer=True)
-    else:
-        departments_count = Department.query.count()
-        lecturers_count = Lecturer.query.count()
-        courses_count = Course.query.count()
-        students_count = Student.query.count()
-        marks = Mark.query.all()
-        average_marks = sum(m.marks for m in marks) / len(marks) if marks else 0
-        notifications = []  # For now, empty
-        report_data = {}
-        for mark in marks:
-            course = mark.course.name
-            if course not in report_data:
-                report_data[course] = []
-            report_data[course].append(mark.marks)
-        return render_template('dashboard.html', departments_count=departments_count,
-                               lecturers_count=lecturers_count, courses_count=courses_count,
-                               students_count=students_count, average_marks=round(average_marks, 2),
-                               notifications=notifications, report_data=report_data, is_lecturer=False)
 
+        average_marks = sum(m.marks for m in marks) / len(marks) if marks else 0
+        report_data = {}
+        for mark in marks:
+            course_name = mark.course.name
+            if course_name not in report_data:
+                report_data[course_name] = []
+            report_data[course_name].append(mark.marks)
+
+        return render_template(
+            'dashboard.html',
+            courses=courses,
+            students_count=students_count,
+            average_marks=round(average_marks, 2),
+            report_data=report_data,
+            is_lecturer=True
+        )
+
+    # Admin dashboard logic (unchanged)
+    departments_count = Department.query.count()
+    lecturers_count = Lecturer.query.count()
+    courses_count = Course.query.count()
+    students_count = Student.query.count()
+
+    marks = Mark.query.all()
+    average_marks = sum(m.marks for m in marks) / len(marks) if marks else 0
+    report_data = {}
+    for mark in marks:
+        course_name = mark.course.name
+        if course_name not in report_data:
+            report_data[course_name] = []
+        report_data[course_name].append(mark.marks)
+
+    return render_template(
+        'dashboard.html',
+        departments_count=departments_count,
+        lecturers_count=lecturers_count,
+        courses_count=courses_count,
+        students_count=students_count,
+        average_marks=round(average_marks, 2),
+        report_data=report_data,
+        is_lecturer=False
+    )
+# Login Route
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
@@ -136,9 +159,82 @@ def login():
         user = User.query.filter_by(username=username).first()
         if user and check_password_hash(user.password, password):
             login_user(user)
+            
+            # Check if lecturer is new and has no profile
+            if user.role == 'lecturer':
+                lecturer = Lecturer.query.filter_by(user_id=user.id).first()
+                if lecturer is None:
+                    flash("Please complete your profile first.", "info")
+                    return redirect(url_for('complete_profile'))
+
+            # Otherwise go to dashboard
             return redirect(url_for('dashboard'))
-        flash('Invalid username or password')
+
+        flash('Invalid username or password', 'error')
     return render_template('login.html')
+
+# Register Route
+@app.route("/register", methods=["GET", "POST"])
+def register():
+    if request.method == "POST":
+        username = request.form.get("username")
+        password = request.form.get("password")
+        confirm_password = request.form.get("confirm_password")
+
+        if password != confirm_password:
+            flash("Passwords do not match.", "error")
+            return redirect(url_for("register"))
+
+        # Check if username exists
+        if User.query.filter_by(username=username).first():
+            flash("Username already exists.", "error")
+            return redirect(url_for("register"))
+
+        hashed_password = generate_password_hash(password, method="sha256")
+        new_user = User(username=username, password=hashed_password, role="lecturer")
+        db.session.add(new_user)
+        db.session.commit()
+
+        flash("Registration successful! Please log in.", "success")
+        return redirect(url_for("login"))
+
+    return render_template("login.html")
+
+@app.route("/complete_profile", methods=["GET", "POST"])
+@login_required
+def complete_profile():
+    # Check if lecturer profile exists
+    lecturer = Lecturer.query.filter_by(user_id=current_user.id).first()
+
+    if request.method == "POST":
+        department_id = request.form.get("department_id")
+        name = request.form.get("name")
+        email = request.form.get("email")
+        phone = request.form.get("phone")
+
+        if lecturer is None:
+            # Create lecturer profile
+            lecturer = Lecturer(
+                user_id=current_user.id,
+                department_id=department_id,
+                name=name,
+                email=email,
+                phone=phone
+            )
+            db.session.add(lecturer)
+        else:
+            # Update existing lecturer
+            lecturer.department_id = department_id
+            lecturer.name = name
+            lecturer.email = email
+            lecturer.phone = phone
+
+        db.session.commit()
+        flash("Profile completed successfully.", "success")
+        return redirect(url_for("dashboard"))
+
+    departments = Department.query.all()
+    return render_template("complete_profile.html", lecturer=lecturer, departments=departments)
 
 @app.route('/logout')
 @login_required
