@@ -93,6 +93,7 @@ def load_user(user_id):
 @login_required
 def dashboard():
     if current_user.role == 'lecturer':
+        # Get the lecturer profile
         lecturer = Lecturer.query.filter_by(user_id=current_user.id).first()
 
         # If lecturer profile does not exist, redirect to complete_profile
@@ -109,6 +110,8 @@ def dashboard():
             marks.extend(Mark.query.filter_by(course_id=course.id).all())
 
         average_marks = sum(m.marks for m in marks) / len(marks) if marks else 0
+
+        # Prepare data for performance charts
         report_data = {}
         for mark in marks:
             course_name = mark.course.name
@@ -116,8 +119,10 @@ def dashboard():
                 report_data[course_name] = []
             report_data[course_name].append(mark.marks)
 
+        # Pass lecturer object to template for full name
         return render_template(
             'dashboard.html',
+            lecturer=lecturer,
             courses=courses,
             students_count=students_count,
             average_marks=round(average_marks, 2),

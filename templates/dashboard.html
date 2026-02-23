@@ -4,6 +4,14 @@
 
 {% block content %}
 <h1>Dashboard</h1>
+
+{% if is_lecturer and lecturer %}
+    <div class="welcome-message">
+        <h3>Welcome back, <span class="lecturer-name">{{ lecturer.name }} </span>!</h3>
+        <p>We’re glad to have you here. Check your courses and activities below.</p>
+    </div>
+{% endif %}
+
 {% if is_lecturer %}
 <div class="dashboard-grid">
     <div class="card">
@@ -27,6 +35,7 @@
         <p>Marked</p>
     </div>
 </div>
+
 <div class="recent-activities">
     <h2>Recent Activities</h2>
     <ul>
@@ -35,6 +44,7 @@
         <li>Applied for leave</li>
     </ul>
 </div>
+
 <h2>My Courses</h2>
 <table>
     <thead>
@@ -54,6 +64,7 @@
         {% endfor %}
     </tbody>
 </table>
+
 {% else %}
 <div class="dashboard-grid">
     <div class="card">
@@ -92,6 +103,7 @@
     </div>
 </div>
 {% endif %}
+
 {% if report_data %}
 <div class="chart-section">
     <h2>Performance Charts</h2>
@@ -106,4 +118,31 @@
     </div>
 </div>
 {% endif %}
+
+<style>
+.welcome-message {
+    background-color: #6200ea;
+    color: white;
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.welcome-message h3 {
+    margin: 0;
+    font-size: 22px;
+}
+
+.welcome-message p {
+    margin: 5px 0 0 0;
+    font-size: 14px;
+    font-style: italic;
+}
+
+.lecturer-name {
+    font-weight: bold;
+    font-style: italic;
+}
+</style>
 {% endblock %}
